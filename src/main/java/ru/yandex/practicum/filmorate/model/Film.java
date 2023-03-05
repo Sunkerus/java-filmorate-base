@@ -16,7 +16,6 @@ import java.time.LocalDate;
 @Builder(toBuilder = true)
 public class Film {
 
-    @Positive(message = "id должно быть положительным")
     private int id;
 
     @NotEmpty(message = "Поле name не должно быть пустым.")
@@ -25,9 +24,8 @@ public class Film {
     @NotEmpty(message = "Поле description не должно быть пустым.")
     private String description;
 
-    @NotEmpty(message = "Пооле не должно быть пустым")
+
     @JsonFormat(pattern = "yyyy-MM-dd")
-    @PastOrPresent(message = "releaseDate не может быть в будущем")
     private LocalDate releaseDate;
 
     @Positive(message = "Переменная duration должна быть положительной")

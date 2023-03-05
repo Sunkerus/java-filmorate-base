@@ -15,7 +15,6 @@ import java.time.LocalDate;
 @Builder(toBuilder = true)
 public class User {
 
-    @Positive(message = "Поле id должно быть положительным")
     private int id;
 
     @Email
@@ -26,7 +25,6 @@ public class User {
 
     private String name;
     @JsonFormat(pattern = "yyyy-MM-dd")
-    @PastOrPresent
     private LocalDate birthday;
 
 

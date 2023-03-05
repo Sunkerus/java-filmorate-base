@@ -15,6 +15,8 @@ import static ru.yandex.practicum.filmorate.validate.Validator.userValidation;
 @Slf4j
 @RestController
 public class UserController {
+
+    private int userIdent = 0;
     private final HashMap<Integer, User> users = new HashMap<>();
 
     @GetMapping("/users")
@@ -26,6 +28,7 @@ public class UserController {
     @PostMapping("/users")
     public User addUser(@Valid @NotNull @RequestBody User user) throws ValidationException {
         userValidation(user);
+        user.setId(userIdent++);
         log.trace("Была добавлена информация о пользователе с id: " + user.getId());
         users.put(user.getId(), user);
         return user;
