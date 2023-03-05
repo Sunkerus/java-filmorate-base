@@ -12,15 +12,19 @@ public class Validator {
         if (film != null ) {
             if (!(film.getName() == null || film.getName().isBlank())) {
                 if (!(film.getDescription() == null || film.getDescription().isBlank())) {
-                    if (!(film.getReleaseDate().isBefore(LocalDate.of(1895, 1, 28)))) {
-                        if ((film.getDuration() <= 0)) {
-                            throw new ValidationException("Продолжительность фильма не может быть отрицательной");
+                    if (film.getDescription().length() <= 200) {
+                        if (!(film.getReleaseDate().isBefore(LocalDate.of(1895, 1, 28)))) {
+                            if ((film.getDuration() <= 0)) {
+                                throw new ValidationException("Продолжительность фильма не может быть отрицательной");
+                            }
+                        } else {
+                            throw new ValidationException("Дата не может быть указана раньше, чем 1895.01.28");
                         }
-                    } else {
-                        throw new ValidationException("Дата не может быть указана раньше, чем 1895.01.28");
+                    }else{
+                        throw new ValidationException("Длина строки не может превышать 200");
                     }
                 } else {
-                    throw new ValidationException("Описание фильма не может быть пустым");
+                    throw new ValidationException("Описание фильма не может соотвествовать данному значению");
                 }
             } else {
                 throw new ValidationException("Имя фильма не может быть пустым");

@@ -15,7 +15,7 @@ import java.time.LocalDate;
 @Builder(toBuilder = true)
 public class User {
 
-    private int id;
+    private Integer id;
 
     @Email
     private String email;
