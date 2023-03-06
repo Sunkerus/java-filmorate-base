@@ -10,15 +10,16 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 
-import static ru.yandex.practicum.filmorate.validate.Validator.filmValidation;
+import static ru.yandex.practicum.filmorate.validate.FilmValidator.validate;
 
 @Slf4j
 @RestController
 public class FilmController {
 
     private int filmIdent = 0;
-    private final HashMap<Integer, Film> filmStorage = new HashMap<>();
+    private final Map<Integer, Film> filmStorage = new HashMap<>();
 
     @GetMapping("/films")
     public Collection<Film> getFilms() {
@@ -27,8 +28,8 @@ public class FilmController {
     }
 
     @PostMapping("/films")
-    public Film postFilms(@Valid @NotNull @RequestBody Film film) throws ValidationException {
-            filmValidation(film);
+    public Film postFilm(@Valid @NotNull @RequestBody Film film) throws ValidationException {
+            validate(film);
             film.setId(++filmIdent);
             log.trace("Был добавлен фильм c id: " + film.getId());
             filmStorage.put(film.getId(),film);
@@ -36,9 +37,9 @@ public class FilmController {
     }
 
     @PutMapping("/films")
-    public Film putFilms(@Valid @NotNull @RequestBody Film film)  throws ValidationException {
+    public Film putFilm(@Valid @NotNull @RequestBody Film film)  throws ValidationException {
         if (filmStorage.containsKey(film.getId())) {
-            filmValidation(film);
+            validate(film);
             log.trace("Фильм был обновлен");
             filmStorage.put(film.getId(), film);
             return film;

@@ -2,10 +2,9 @@ package ru.yandex.practicum.filmorate.model;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.PastOrPresent;
-import javax.validation.constraints.Positive;
+
+import javax.validation.constraints.*;
+
 import lombok.Builder;
 import lombok.Data;
 
@@ -18,17 +17,17 @@ public class Film {
 
     private Integer id;
 
-    @NotEmpty(message = "Поле name не должно быть пустым.")
+    @NotBlank(message = "Поле name не должно быть пустым")
     private String name;
 
-    @NotEmpty(message = "Поле description не должно быть пустым.")
+    @NotBlank(message = "Поле description не должно быть пустым.")
     private String description;
 
-
+    @NotNull(message = "Поле releaseDate не должно быть пустым")
     @JsonFormat(pattern = "yyyy-MM-dd")
     private LocalDate releaseDate;
 
+    @NotNull(message = "Поле duration не должно быть пустым")
     @Positive(message = "Переменная duration должна быть положительной")
-    @NotNull(message = "Необходимо добавить переменную duration")
     private int duration;
 }

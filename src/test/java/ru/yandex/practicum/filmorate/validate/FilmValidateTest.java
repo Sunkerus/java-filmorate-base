@@ -9,8 +9,7 @@ import java.time.LocalDate;
 
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static ru.yandex.practicum.filmorate.validate.Validator.filmValidation;
-
+import static ru.yandex.practicum.filmorate.validate.FilmValidator.validate;
 public class FilmValidateTest {
 
     private Film film;
@@ -27,37 +26,21 @@ public class FilmValidateTest {
     }
 
     @Test
-    void shouldErrorThrowsWhenObjectIsNull() {
-        assertThrows(ValidationException.class, () -> filmValidation(null));
-    }
-
-
-    @Test
-    void shouldErrorThrowsWhenDircriptionIsNotCorrect() {
-        final Film desctiprionBlank = film.toBuilder().description("").build();
-        final Film descriptionNull = film.toBuilder().description(null).build();
-
-        assertThrows(ValidationException.class, () -> filmValidation(desctiprionBlank));
-        assertThrows(ValidationException.class, () -> filmValidation(descriptionNull));
-    }
-
-    @Test
-    void shouldErrorThrowsWhenNameIsEmpty() {
-        final Film nameBlank = film.toBuilder().name("").build();
-        assertThrows(ValidationException.class, () -> filmValidation(nameBlank));
-    }
-
-
-    @Test
     void shouldErrorThrowsWhenReleaseDateIsEarlyThenStartDate() {
         final Film filmFailReleaseDate = film.toBuilder().releaseDate(LocalDate.of(1800, 1, 1)).build();
 
-        assertThrows(ValidationException.class, () -> filmValidation(filmFailReleaseDate));
+        assertThrows(ValidationException.class, () -> validate(filmFailReleaseDate));
     }
 
     @Test
-    void shouldErrorThrowsWhenDurationIsNegative() {
-        Film filmFailDuration = film.toBuilder().duration(-10).build();
-        assertThrows(ValidationException.class, () -> filmValidation(filmFailDuration));
+    void shouldErrorThrowsWhenDescriptionIsBig() {
+        final String bigDescription = "bigDescription".repeat(250);
+
+        final Film filmFailReleaseDate = film.toBuilder().description(bigDescription).build();
+
+        assertThrows(ValidationException.class, () -> validate(filmFailReleaseDate));
     }
+
+
+
 }

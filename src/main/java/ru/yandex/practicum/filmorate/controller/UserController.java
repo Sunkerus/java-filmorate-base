@@ -9,15 +9,16 @@ import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 
-import static ru.yandex.practicum.filmorate.validate.Validator.userValidation;
+import static ru.yandex.practicum.filmorate.validate.UserValidator.validateCorrect;
 
 @Slf4j
 @RestController
 public class UserController {
 
     private int userIdent = 0;
-    private final HashMap<Integer, User> userStorage = new HashMap<>();
+    private final Map<Integer, User> userStorage = new HashMap<>();
 
     @GetMapping("/users")
     public Collection<User> getAllUsers() {
@@ -27,7 +28,7 @@ public class UserController {
 
     @PostMapping("/users")
     public User addUser(@Valid @NotNull @RequestBody User user) throws ValidationException {
-        userValidation(user);
+        validateCorrect(user);
 
         if (user.getId() == null) {
             user.setId(++userIdent);
@@ -40,9 +41,11 @@ public class UserController {
     @PutMapping("/users")
     public User updateUser(@Valid @NotNull @RequestBody User user) throws ValidationException {
         if (userStorage.containsKey(user.getId())) {
-            userValidation(user);
+            validateCorrect(user);
             userStorage.put(user.getId(),user);
             return userStorage.get(user.getId());
-        } else {throw new ValidationException("Пользователь с таким id не найден. ");}
+        } else {
+            throw new ValidationException("Пользователь с таким id не найден. ");
+        }
     }
 }

@@ -2,10 +2,9 @@ package ru.yandex.practicum.filmorate.model;
 
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.PastOrPresent;
-import javax.validation.constraints.Positive;
+
+import javax.validation.constraints.*;
+
 import lombok.Builder;
 import lombok.Data;
 
@@ -17,14 +16,18 @@ public class User {
 
     private Integer id;
 
+    @NotBlank(message = "Поле email не должно быть пустым.")
     @Email
     private String email;
 
-    @NotEmpty(message = "Поле login не может быть пустым")
+    @NotBlank(message = "Поле login не может быть пустым")
     private String login;
 
     private String name;
+
+
     @JsonFormat(pattern = "yyyy-MM-dd")
+    @NotNull(message = "Поле birthday не может быть пустым")
     private LocalDate birthday;
 
 
