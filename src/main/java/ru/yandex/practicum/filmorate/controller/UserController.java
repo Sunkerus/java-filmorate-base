@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.controller;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
@@ -42,7 +43,7 @@ public class UserController {
     public User updateUser(@Valid @NotNull @RequestBody User user) throws ValidationException {
         if (userStorage.containsKey(user.getId())) {
             validateCorrect(user);
-            userStorage.put(user.getId(),user);
+            userStorage.put(user.getId(), user);
             return userStorage.get(user.getId());
         } else {
             throw new ValidationException("Пользователь с таким id не найден. ");

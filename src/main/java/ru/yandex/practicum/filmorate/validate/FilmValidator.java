@@ -8,8 +8,8 @@ import java.time.LocalDate;
 public class FilmValidator {
 
     public static void validate(Film film) throws ValidationException {
-           validateDescription(film);
-           validateTime(film);
+        validateDescription(film);
+        validateTime(film);
     }
 
     private static void validateDescription(Film film) throws ValidationException {

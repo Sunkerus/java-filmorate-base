@@ -29,21 +29,21 @@ public class FilmController {
 
     @PostMapping("/films")
     public Film postFilm(@Valid @NotNull @RequestBody Film film) throws ValidationException {
-            validate(film);
-            film.setId(++filmIdent);
-            log.trace("Был добавлен фильм c id: " + film.getId());
-            filmStorage.put(film.getId(),film);
-            return film;
+        validate(film);
+        film.setId(++filmIdent);
+        log.trace("Был добавлен фильм c id: " + film.getId());
+        filmStorage.put(film.getId(), film);
+        return film;
     }
 
     @PutMapping("/films")
-    public Film putFilm(@Valid @NotNull @RequestBody Film film)  throws ValidationException {
+    public Film putFilm(@Valid @NotNull @RequestBody Film film) throws ValidationException {
         if (filmStorage.containsKey(film.getId())) {
             validate(film);
             log.trace("Фильм был обновлен");
             filmStorage.put(film.getId(), film);
             return film;
-        }else {
+        } else {
             throw new ValidationException("Фильм с таким id не найден");
         }
     }

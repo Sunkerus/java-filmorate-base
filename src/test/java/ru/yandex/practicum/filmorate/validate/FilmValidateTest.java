@@ -10,6 +10,7 @@ import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static ru.yandex.practicum.filmorate.validate.FilmValidator.validate;
+
 public class FilmValidateTest {
 
     private Film film;
@@ -40,7 +41,6 @@ public class FilmValidateTest {
 
         assertThrows(ValidationException.class, () -> validate(filmFailReleaseDate));
     }
-
 
 
 }
