@@ -8,15 +8,9 @@ import java.time.LocalDate;
 public class FilmValidator {
 
     public static void validate(Film film) throws ValidationException {
-        validateDescription(film);
         validateTime(film);
     }
 
-    private static void validateDescription(Film film) throws ValidationException {
-        if (film.getDescription().length() > 200) {
-            throw new ValidationException("Описание фильма не должно превышать 200 символов.");
-        }
-    }
 
     private static void validateTime(Film film) throws ValidationException {
         if (film.getReleaseDate().isBefore(LocalDate.of(1895, 1, 28))) {

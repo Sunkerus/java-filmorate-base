@@ -28,15 +28,6 @@ public class UserValidateTest {
                 .build();
     }
 
-
-    @Test
-    public void shouldErrorThrowsWhenBirthdayDateIsIncorrect() {
-        final User birthdayNotCorrectFuture = user.toBuilder().birthday(LocalDate.of(2077, 1, 1)).build();
-
-        assertThrows(ValidationException.class, () -> validateCorrect(birthdayNotCorrectFuture));
-    }
-
-
     @Test
     public void shouldErrorThrowsWhenNameIdCorrect() {
         User nameWithNull = user.toBuilder().name(null).build();

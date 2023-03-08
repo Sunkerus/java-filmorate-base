@@ -28,6 +28,7 @@ public class User {
 
     @JsonFormat(pattern = "yyyy-MM-dd")
     @NotNull(message = "Поле birthday не может быть пустым")
+    @Past(message = "Дата дня рождения не должна быть указана в будущем.")
     private LocalDate birthday;
 
 

@@ -32,15 +32,4 @@ public class FilmValidateTest {
 
         assertThrows(ValidationException.class, () -> validate(filmFailReleaseDate));
     }
-
-    @Test
-    void shouldErrorThrowsWhenDescriptionIsBig() {
-        final String bigDescription = "bigDescription".repeat(250);
-
-        final Film filmFailReleaseDate = film.toBuilder().description(bigDescription).build();
-
-        assertThrows(ValidationException.class, () -> validate(filmFailReleaseDate));
-    }
-
-
 }

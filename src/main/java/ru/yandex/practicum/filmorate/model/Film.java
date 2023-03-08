@@ -21,6 +21,7 @@ public class Film {
     private String name;
 
     @NotBlank(message = "Поле description не должно быть пустым.")
+    @Size(max = 200, message = "Описание не должно быть больше, чем 200 символов.")
     private String description;
 
     @NotNull(message = "Поле releaseDate не должно быть пустым")
