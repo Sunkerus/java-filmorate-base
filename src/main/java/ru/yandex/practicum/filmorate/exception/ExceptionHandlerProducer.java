@@ -33,7 +33,7 @@ public class ExceptionHandlerProducer {
     //500 — если возникло исключение.
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public Map<String, String> handle(Throwable e) {
+    public Map<String, String> handle(Exception e) {
         log.error(e.getMessage(), e);
         return Map.of("error","Возникло исключение",
                 "errorMessage", e.getMessage());

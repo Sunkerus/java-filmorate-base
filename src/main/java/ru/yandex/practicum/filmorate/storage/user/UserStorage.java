@@ -15,7 +15,7 @@ public interface UserStorage {
 
     User delete(Integer id);
 
-    User update(User user);
+    User update(User user) throws Exception;
 
     Collection<User> getAll();
 

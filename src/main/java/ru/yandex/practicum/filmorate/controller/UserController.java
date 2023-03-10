@@ -50,18 +50,18 @@ public class UserController {
 
     @PutMapping(value = "/{id}/friends/{friendId}")
     public User addFriend(@NotNull @Positive @PathVariable Integer id,
-                          @NotNull @Positive @PathVariable Integer friendId) throws NotFoundObjectException {
+                          @NotNull @Positive @PathVariable Integer friendId) throws Exception {
         return userService.addFriendById(id, friendId);
     }
 
     @PutMapping
-    public User updateUser(@RequestBody @NotNull @Valid User user) throws ValidationException{
+    public User updateUser(@RequestBody @NotNull @Valid User user) throws Exception{
         return userService.updateUser(user);
     }
 
     @DeleteMapping(value = "/{id}/friends/{friendId}")
     public User deleteFriend( @NotNull @Positive @PathVariable Integer id,
-                              @NotNull @Positive @PathVariable Integer friendId) throws NotFoundObjectException {
+                              @NotNull @Positive @PathVariable Integer friendId) throws Exception {
         return userService.deleteFriendById(id, friendId);
     }
 

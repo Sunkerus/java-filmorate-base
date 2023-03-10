@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
+import ru.yandex.practicum.filmorate.exception.InternalServerException;
 import ru.yandex.practicum.filmorate.exception.NotFoundObjectException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
@@ -40,10 +41,11 @@ public class UserService {
         return newUser;
     }
 
-    public User updateUser(User user) throws ValidationException {
+    public User updateUser(User user) throws ValidationException,Exception {
+
         validateCorrect(user);
         User updateUser = userStorage.update(user);
-        log.debug("Пользователь {}, {}, удален", updateUser.getId(), user.getName());
+        log.debug("Пользователь {}, {}, обновлен", updateUser.getId(), user.getName());
         return updateUser;
     }
     public User deleteUserById(Integer id) throws NotFoundObjectException {
@@ -64,7 +66,7 @@ public class UserService {
         return user;
     }
 
-    public User addFriendById(Integer id, Integer friendId) throws NotFoundObjectException {
+    public User addFriendById(Integer id, Integer friendId) throws Exception {
         User user = userStorage.get(id);
         User friend = userStorage.get(friendId);
 
@@ -79,7 +81,7 @@ public class UserService {
         }
     }
 
-    public User deleteFriendById(Integer firstFriend, Integer secondFriend) throws NotFoundObjectException {
+    public User deleteFriendById(Integer firstFriend, Integer secondFriend) throws Exception {
         User user = userStorage.get(firstFriend);
         User friend = userStorage.get(secondFriend);
 
