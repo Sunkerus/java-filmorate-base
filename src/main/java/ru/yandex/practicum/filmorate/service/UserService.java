@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import ru.yandex.practicum.filmorate.exception.NotFoundObjectException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
@@ -12,6 +13,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+
+import static ru.yandex.practicum.filmorate.validate.UserValidator.validateCorrect;
 
 @Slf4j
 @Service
@@ -25,6 +28,7 @@ public class UserService {
     }
 
     public User addUser(User user) throws ValidationException {
+            validateCorrect(user);
         if (user.getName().isBlank()) {
             user.setName(user.getLogin());
             userStorage.add(user);
@@ -36,12 +40,13 @@ public class UserService {
         return newUser;
     }
 
-    public User updateUser(User user) {
+    public User updateUser(User user) throws ValidationException {
+        validateCorrect(user);
         User updateUser = userStorage.update(user);
         log.debug("Пользователь {}, {}, удален", updateUser.getId(), user.getName());
         return updateUser;
     }
-    public User deleteUserById(Integer id) throws Exception {
+    public User deleteUserById(Integer id) throws NotFoundObjectException {
         User deleteUser = userStorage.delete(id);
         log.debug("Пользователь {}, {}, удален", deleteUser.getId(), deleteUser.getName());
         return deleteUser;
@@ -53,13 +58,13 @@ public class UserService {
         return users;
     }
 
-    public User getUserById(Integer id) {
+    public User getUserById(Integer id) throws NotFoundObjectException{
         User user = userStorage.get(id);
         log.debug("Был получен пользователь {}, {}", id, user.getName());
         return user;
     }
 
-    public User addFriendById(Integer id, Integer friendId) throws Exception {
+    public User addFriendById(Integer id, Integer friendId) throws NotFoundObjectException {
         User user = userStorage.get(id);
         User friend = userStorage.get(friendId);
 
@@ -70,26 +75,26 @@ public class UserService {
                     friend.getId(), friend.getName(), friend.getFriends());
             return user;
         } else {
-            throw new Exception();
+            throw new NotFoundObjectException("Один или два друга не найдены");
         }
     }
 
-    public User deleteFriendById(Integer firstFriend, Integer secondFriend) throws Exception {
+    public User deleteFriendById(Integer firstFriend, Integer secondFriend) throws NotFoundObjectException {
         User user = userStorage.get(firstFriend);
         User friend = userStorage.get(secondFriend);
 
         if (user.deleteFriend(secondFriend) && friend.deleteFriend(firstFriend)) {
             userStorage.update(user);
             userStorage.update(friend);
-            log.debug("Друг {} {}, был добавлен", secondFriend, friend.getName(),
+            log.debug("Друг {} {}, был добавлен {}", secondFriend, friend.getName(),
                     friend.getFriends());
             return user;
         } else {
-            throw new Exception();
+            throw new NotFoundObjectException("Объекты не найдены");
         }
     }
 
-    public List<User> getFriendsById(Integer id) {
+    public List<User> getFriendsById(Integer id) throws NotFoundObjectException {
         User user = userStorage.get(id);
         List<User> friends = new ArrayList<>();
         for (Integer friendId : user.getFriends()) {
@@ -99,7 +104,7 @@ public class UserService {
         return friends;
     }
 
-    public List<User> getMutalFriendsById(Integer user1Id, Integer user2Id) throws Exception {
+    public List<User> getMutalFriendsById(Integer user1Id, Integer user2Id) throws NotFoundObjectException {
         Set<Integer> firstFriendId = userStorage.get(user1Id).getFriends();
         Set<Integer> secondFriendId = userStorage.get(user2Id).getFriends();
 

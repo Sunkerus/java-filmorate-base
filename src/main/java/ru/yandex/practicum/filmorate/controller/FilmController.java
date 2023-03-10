@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.NotFoundObjectException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
@@ -27,7 +28,7 @@ public class FilmController {
     }
 
     @GetMapping("/{id}")
-    public Film getFilmById(@PathVariable @NotNull Integer id) {
+    public Film getFilmById(@PathVariable @NotNull Integer id) throws NotFoundObjectException {
         return filmService.getFilmById(id);
     }
 
@@ -39,17 +40,17 @@ public class FilmController {
     }
 
     @PostMapping
-    public Film postFilm(@NotNull @Valid @RequestBody Film film)  {
+    public Film postFilm(@NotNull @Valid @RequestBody Film film)  throws ValidationException {
         return filmService.addFilm(film);
     }
 
     @PutMapping
-    public Film updateFilm(@NotNull @Valid @RequestBody Film film) {
+    public Film updateFilm(@NotNull @Valid @RequestBody Film film) throws ValidationException{
         return filmService.updateFilm(film);
     }
     @PutMapping("/{id}/like/{userId}")
     public Film putlikesFilm(@NotNull @Positive @PathVariable Integer id,
-                         @NotNull @Positive @PathVariable Integer userId) {
+                         @NotNull @Positive @PathVariable Integer userId) throws NotFoundObjectException {
         return filmService.updateUserFilmLikes(id, userId);
     }
 
@@ -60,7 +61,7 @@ public class FilmController {
 
     @DeleteMapping("/{id}/like/{userId}")
     public Film deleteLikeFilm(@NotNull @Positive @PathVariable Integer id,
-                           @NotNull @Positive @PathVariable Integer userId) throws Exception {
+                           @NotNull @Positive @PathVariable Integer userId) throws NotFoundObjectException {
         return filmService.deleteLikesForUser(id, userId);
     }
 }

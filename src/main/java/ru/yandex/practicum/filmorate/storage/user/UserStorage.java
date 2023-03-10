@@ -11,13 +11,13 @@ import java.util.Map;
 public interface UserStorage {
     User get(Integer id);
 
-    User add(User user) throws ValidationException;
+    User add(User user);
 
-    User delete(Integer id) throws Exception;
+    User delete(Integer id);
 
     User update(User user);
 
     Collection<User> getAll();
 
-    boolean containsUser(Integer id) throws NotFoundObjectException;
+    boolean containsUser(Integer id);
 }

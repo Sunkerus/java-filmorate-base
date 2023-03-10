@@ -6,6 +6,8 @@ import javax.validation.constraints.Positive;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
+import ru.yandex.practicum.filmorate.exception.NotFoundObjectException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
@@ -32,39 +34,39 @@ public class UserController {
 
     @GetMapping("/{id}/friends/common/{otherId}")
     public List<User> getCommonFriends(@PathVariable(name = "id") @NotNull @Positive Integer firstUserId,
-                                       @PathVariable(name = "otherId") @NotNull @Positive Integer secondUserId) throws Exception {
+                                       @PathVariable(name = "otherId") @NotNull @Positive Integer secondUserId) throws NotFoundObjectException {
         return userService.getMutalFriendsById(firstUserId, secondUserId);
     }
 
     @GetMapping("/{id}")
-    public User getUserById(@NotNull @Positive @PathVariable  Integer id) throws Exception {
+    public User getUserById(@NotNull @Positive @PathVariable  Integer id) throws NotFoundObjectException {
         return userService.getUserById(id);
     }
 
     @PostMapping
-    public User addUser(@NotNull @Valid @RequestBody User user) throws ValidationException  {
+    public User addUser(@NotNull @Valid @RequestBody User user) throws ValidationException {
         return userService.addUser(user);
     }
 
     @PutMapping(value = "/{id}/friends/{friendId}")
     public User addFriend(@NotNull @Positive @PathVariable Integer id,
-                          @NotNull @Positive @PathVariable Integer friendId) throws Exception {
+                          @NotNull @Positive @PathVariable Integer friendId) throws NotFoundObjectException {
         return userService.addFriendById(id, friendId);
     }
 
     @PutMapping
-    public User updateUser(@RequestBody @NotNull @Valid User user) throws Exception {
+    public User updateUser(@RequestBody @NotNull @Valid User user) throws ValidationException{
         return userService.updateUser(user);
     }
 
     @DeleteMapping(value = "/{id}/friends/{friendId}")
     public User deleteFriend( @NotNull @Positive @PathVariable Integer id,
-                              @NotNull @Positive @PathVariable Integer friendId) throws Exception {
+                              @NotNull @Positive @PathVariable Integer friendId) throws NotFoundObjectException {
         return userService.deleteFriendById(id, friendId);
     }
 
     @DeleteMapping("/{id}")
-    public User deleteUserById(@NotNull @Positive @PathVariable Integer id) throws Exception {
+    public User deleteUserById(@NotNull @Positive @PathVariable Integer id)  throws NotFoundObjectException {
         return userService.deleteUserById(id);
     }
 }

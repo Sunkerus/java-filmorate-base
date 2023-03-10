@@ -5,12 +5,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundObjectException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static ru.yandex.practicum.filmorate.validate.FilmValidator.validate;
 
 @Slf4j
 @Service
@@ -21,18 +24,19 @@ public class FilmService {
 
     @Autowired
     public FilmService(FilmStorage filmStorage, UserService userService) {
-
         this.filmStorage = filmStorage;
         this.userService = userService;
     }
 
-    public Film addFilm(Film film) {
+    public Film addFilm(Film film) throws ValidationException {
+        validate(film);
         Film newFilm = filmStorage.add(film);
         log.debug("Был добавлен новый фильм: {}, {}", newFilm.getId(), newFilm.getName());
         return newFilm;
     }
 
-    public Film updateFilm(Film film) {
+    public Film updateFilm(Film film) throws ValidationException {
+        validate(film);
         Film updateFilm = filmStorage.update(film);
         log.debug("Фильм с id {}, {}, был обновлен.", updateFilm.getName(), film.getId());
         return updateFilm;
@@ -55,7 +59,7 @@ public class FilmService {
         return film;
     }
 
-    public List<Film> getPopularFilms(Integer count) {
+    public List<Film> getPopularFilms(Integer count)  {
         List<Film> films = filmStorage.getAll().stream()
                 .sorted((o1, o2) -> Long.compare(o2.getRate(), o1.getRate()))
                 .limit(count)

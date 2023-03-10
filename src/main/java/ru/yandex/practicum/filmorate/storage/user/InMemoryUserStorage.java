@@ -57,18 +57,21 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public User update(User user) throws NotFoundObjectException {
+    public User update(User user) throws ValidationException {
         if (users.containsKey(user.getId())) {
             users.put(user.getId(), user);
             return user;
         } else {
-            throw new NotFoundObjectException("Пользователь не найден");
+            throw new ValidationException("Пользователь не найден");
         }
     }
 
     @Override
     public boolean containsUser(Integer id) throws NotFoundObjectException {
-        if (users.containsKey(id)) return true;
-        else throw new NotFoundObjectException("Невозможно найти пользователя");
+        if (users.containsKey(id)) {
+            return true;
+        } else {
+            throw new NotFoundObjectException("Невозможно найти пользователя");
+        }
     }
 }

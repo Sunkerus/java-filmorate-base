@@ -31,7 +31,6 @@ public class InMemoryFilmStorage implements FilmStorage{
     public Film add(Film film) throws NotFoundObjectException {
         boolean filmExist = films.values().stream().anyMatch(f -> f.equals(film));
 
-
         if(filmExist) {
             throw new NotFoundObjectException("Фильм с таким id не существует");
         }
