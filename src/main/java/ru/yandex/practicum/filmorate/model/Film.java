@@ -38,8 +38,7 @@ public class Film {
 
 
     public boolean addUserLikes(int userId) {
-
-        if (userLikes == null){
+        if (userLikes == null) {
             userLikes = new HashSet<>();
         }
         return userLikes.add(userId);

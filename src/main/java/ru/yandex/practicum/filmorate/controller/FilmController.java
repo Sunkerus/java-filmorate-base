@@ -3,8 +3,6 @@ package ru.yandex.practicum.filmorate.controller;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.instances.NotFoundObjectException;
-import ru.yandex.practicum.filmorate.exception.instances.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 
@@ -28,7 +26,7 @@ public class FilmController {
     }
 
     @GetMapping("/{id}")
-    public Film getFilmById(@PathVariable @NotNull Integer id) throws NotFoundObjectException {
+    public Film getFilmById(@PathVariable @NotNull Integer id) {
         return filmService.getFilmById(id);
     }
 
@@ -40,30 +38,30 @@ public class FilmController {
     }
 
     @PostMapping
-    public Film postFilm(@NotNull @Valid @RequestBody Film film) throws ValidationException {
+    public Film postFilm(@NotNull @Valid @RequestBody Film film) {
         return filmService.addFilm(film);
     }
 
     @PutMapping
-    public Film updateFilm(@NotNull @Valid @RequestBody Film film) throws ValidationException {
+    public Film updateFilm(@NotNull @Valid @RequestBody Film film) {
         return filmService.updateFilm(film);
     }
 
     @PutMapping("/{id}/like/{userId}")
     public Film putlikesFilm(@NotNull @Positive @PathVariable Integer id,
-                             @NotNull @Positive @PathVariable Integer userId) throws NotFoundObjectException {
-        return filmService.updateUserFilmLikes(id, userId);
+                             @NotNull @Positive @PathVariable Integer userId) {
+        return filmService.updateUserLikesFilms(id, userId);
     }
 
     @DeleteMapping("/{id}")
-    public Film deleteFilmById(@NotNull @Positive @PathVariable Integer id) throws NotFoundObjectException {
+    public Film deleteFilmById(@NotNull @Positive @PathVariable Integer id) {
         return filmService.deleteFilmById(id);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
     public Film deleteLikeFilm(@NotNull @Positive @PathVariable Integer id,
-                               @NotNull @Positive @PathVariable Integer userId) throws NotFoundObjectException {
-        return filmService.deleteLikesForUser(id, userId);
+                               @NotNull @Positive @PathVariable Integer userId) {
+        return filmService.deleteUserLikesFilms(id, userId);
     }
 }
 

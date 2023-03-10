@@ -1,7 +1,6 @@
 package ru.yandex.practicum.filmorate.storage.film;
 
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exception.instances.InternalServerException;
 import ru.yandex.practicum.filmorate.exception.instances.NotFoundObjectException;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -19,7 +18,6 @@ public class InMemoryFilmStorage implements FilmStorage {
     public InMemoryFilmStorage() {
         films = new HashMap<>();
     }
-
 
     @Override
     public Collection<Film> getAll() {

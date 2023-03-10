@@ -49,10 +49,12 @@ public class FilmService {
     }
 
     public List<Film> getPopularFilms(Integer count) {
-        List<Film> films = filmStorage.getAll().stream()
+        List<Film> films = filmStorage.getAll()
+                .stream()
                 .sorted((o1, o2) -> Long.compare(o2.getRate(), o1.getRate()))
                 .limit(count)
                 .collect(Collectors.toList());
+
         log.debug("Получены популярные фильмы");
         return films;
     }
@@ -64,7 +66,7 @@ public class FilmService {
         return updateFilm;
     }
 
-    public Film updateUserFilmLikes(Integer id, Integer userId) throws NotFoundObjectException {
+    public Film updateUserLikesFilms(Integer id, Integer userId) throws NotFoundObjectException {
         Film film = filmStorage.get(id);
         if (userService.containsUser(userId)) {
             if (film.addUserLikes(userId)) {
@@ -72,20 +74,22 @@ public class FilmService {
                 log.debug("Для пользователя с id {} были добавлены лайки {}", id, film.getUserLikes());
                 return filmStorage.update(film);
             } else {
-                throw new NotFoundObjectException("Не найдено");
+                log.debug("Не удалось добавить информацию о лайках");
+                throw new InternalServerException("Не удалось добавить информацию о лайках.");
             }
         } else {
-            throw new NotFoundObjectException("Не найдено");
+            log.debug("Пользователь с таким userItd " + userId + " не найден");
+            throw new NotFoundObjectException("Пользователь с таким userItd " + userId + " не найден");
         }
     }
 
     public Film deleteFilmById(Integer id) throws NotFoundObjectException {
         Film deleteFilm = filmStorage.delete(id);
-        log.debug("Фильм: {}, {}, был удален", deleteFilm.getName(), deleteFilm.getId());
+        log.debug("Фильм: {}, {}, был удален", deleteFilm.getId(), deleteFilm.getName());
         return deleteFilm;
     }
 
-    public Film deleteLikesForUser(Integer id, Integer userId) throws NotFoundObjectException {
+    public Film deleteUserLikesFilms(Integer id, Integer userId) throws NotFoundObjectException {
         Film film = filmStorage.get(id);
         if (userService.containsUser(userId)) {
             if (film.deleteUserLike(userId)) {
@@ -93,9 +97,11 @@ public class FilmService {
                 log.debug("Для пользователя с id {} были удалены все лайки {}", userId, film.getUserLikes());
                 return filmStorage.update(film);
             } else {
-                throw new NotFoundObjectException("Фильм с таким id не найден");
+                log.debug("Не удалось удалить информацию о лайках");
+                throw new InternalServerException("Не удалось удалить информацию о лайках");
             }
         } else {
+            log.debug("Пользователь с таким userItd " + userId + " не найден");
             throw new NotFoundObjectException("Фильм с таким id не найден");
         }
     }
