@@ -9,6 +9,7 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Set;
 
 
@@ -37,6 +38,10 @@ public class Film {
 
 
     public boolean addUserLikes(int userId) {
+
+        if (userLikes == null){
+            userLikes = new HashSet<>();
+        }
         return userLikes.add(userId);
     }
 
