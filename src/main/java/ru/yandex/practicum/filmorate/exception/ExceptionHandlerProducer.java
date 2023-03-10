@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import java.util.Map;
 
 @Slf4j
+@RestControllerAdvice
 public class ExceptionHandlerProducer {
 
     //400 — если ошибка валидации: ValidationException;
