@@ -17,6 +17,7 @@ import java.util.Set;
 @Builder(toBuilder = true)
 public class User {
 
+
     private Set<Integer> friends;
 
     private Integer id;
@@ -37,6 +38,10 @@ public class User {
     private LocalDate birthday;
 
     public boolean addFriend(int id) {
+
+        if (friends == null) {
+            friends = new HashSet<>();
+        }
         return friends.add(id);
     }
     public boolean deleteFriend(int id) {
