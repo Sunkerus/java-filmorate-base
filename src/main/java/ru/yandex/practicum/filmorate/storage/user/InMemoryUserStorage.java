@@ -1,28 +1,29 @@
 package ru.yandex.practicum.filmorate.storage.user;
 
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
-import ru.yandex.practicum.filmorate.exception.InternalServerException;
-import ru.yandex.practicum.filmorate.exception.NotFoundObjectException;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.exception.instances.InternalServerException;
+import ru.yandex.practicum.filmorate.exception.instances.NotFoundObjectException;
+import ru.yandex.practicum.filmorate.exception.instances.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
-@Repository
+@Component
 public class InMemoryUserStorage implements UserStorage {
 
-    @Override
-    public Collection<User> getAll() {
-        return users.values();
-    }
     private final Map<Integer, User> users;
     private Integer userId = 0;
 
     public InMemoryUserStorage() {
         users = new HashMap<>();
+    }
+
+
+    @Override
+    public Collection<User> getAll() {
+        return users.values();
     }
 
     @Override
@@ -36,11 +37,10 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     public User add(User user) throws ValidationException {
-        boolean userExist = users.values().stream().anyMatch(u -> u.equals(user));
-        if (userExist) {
+        boolean isUserExist = users.values().stream().anyMatch(u -> u.equals(user));
+        if (isUserExist) {
             throw new ValidationException("Возникла проблема при добалвении пользователя");
         }
-
         user.setId(++userId);
         users.put(user.getId(), user);
         return user;
