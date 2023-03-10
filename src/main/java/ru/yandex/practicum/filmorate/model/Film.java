@@ -9,13 +9,16 @@ import lombok.Builder;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 
 @Data
 @Builder(toBuilder = true)
 public class Film {
 
+    private Set<Integer> userLikes;
     private Integer id;
+    private Integer rate;
 
     @NotBlank(message = "Поле name не должно быть пустым")
     private String name;
@@ -31,4 +34,13 @@ public class Film {
     @NotNull(message = "Поле duration не должно быть пустым")
     @Positive(message = "Переменная duration должна быть положительной")
     private int duration;
+
+
+    public boolean addUserLikes(int userId) {
+        return userLikes.add(userId);
+    }
+
+    public boolean deleteUserLike(int userId) {
+        return userLikes.remove(userId);
+    }
 }
