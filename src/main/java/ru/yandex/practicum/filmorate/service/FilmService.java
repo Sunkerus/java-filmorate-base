@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.instances.InternalServerException;
 import ru.yandex.practicum.filmorate.exception.instances.NotFoundObjectException;
-import ru.yandex.practicum.filmorate.exception.instances.ValidationException;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.model.Film;
 
@@ -29,7 +28,7 @@ public class FilmService {
         this.userService = userService;
     }
 
-    public Film addFilm(Film film) throws ValidationException {
+    public Film addFilm(Film film)  {
         validate(film);
         Film newFilm = filmStorage.add(film);
         log.debug("Был добавлен новый фильм: {}, {}", newFilm.getId(), newFilm.getName());
@@ -42,7 +41,7 @@ public class FilmService {
         return users;
     }
 
-    public Film getFilmById(Integer id) throws NotFoundObjectException {
+    public Film getFilmById(Integer id)  {
         Film film = filmStorage.get(id);
         log.debug("Получен фильм с id: {}, {} и названием", id, film.getName());
         return film;
@@ -59,14 +58,14 @@ public class FilmService {
         return films;
     }
 
-    public Film updateFilm(Film film) throws ValidationException, InternalServerException {
+    public Film updateFilm(Film film)  {
         validate(film);
         Film updateFilm = filmStorage.update(film);
         log.debug("Фильм с id {}, {}, был обновлен.", updateFilm.getName(), film.getId());
         return updateFilm;
     }
 
-    public Film updateUserLikesFilms(Integer id, Integer userId) throws NotFoundObjectException {
+    public Film updateUserLikesFilms(Integer id, Integer userId) throws NotFoundObjectException, InternalServerException{
         Film film = filmStorage.get(id);
         if (userService.containsUser(userId)) {
             if (film.addUserLikes(userId)) {
@@ -83,7 +82,7 @@ public class FilmService {
         }
     }
 
-    public Film deleteFilmById(Integer id) throws NotFoundObjectException {
+    public Film deleteFilmById(Integer id)  {
         Film deleteFilm = filmStorage.delete(id);
         log.debug("Фильм: {}, {}, был удален", deleteFilm.getId(), deleteFilm.getName());
         return deleteFilm;

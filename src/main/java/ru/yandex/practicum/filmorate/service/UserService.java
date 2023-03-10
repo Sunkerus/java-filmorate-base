@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.instances.NotFoundObjectException;
-import ru.yandex.practicum.filmorate.exception.instances.ValidationException;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 import ru.yandex.practicum.filmorate.model.User;
 
@@ -26,11 +25,11 @@ public class UserService {
         this.userStorage = userStorage;
     }
 
-    public boolean containsUser(Integer id) throws NotFoundObjectException {
+    public boolean containsUser(Integer id)  {
         return userStorage.containsUser(id);
     }
 
-    public User addUser(User user) throws ValidationException {
+    public User addUser(User user) {
         validateCorrect(user);
         if (user.getName().isBlank()) {
             user.setName(user.getLogin());
@@ -43,7 +42,7 @@ public class UserService {
         return newUser;
     }
 
-    public User addFriendById(Integer id, Integer friendId) throws NotFoundObjectException {
+    public User addFriendById(Integer id, Integer friendId) {
         User user = userStorage.get(id);
         User friend = userStorage.get(friendId);
 
@@ -58,14 +57,14 @@ public class UserService {
         }
     }
 
-    public User updateUser(User user) throws ValidationException {
+    public User updateUser(User user) {
         validateCorrect(user);
         User updateUser = userStorage.update(user);
         log.debug("Пользователь {}, {}, обновлен", updateUser.getId(), user.getName());
         return updateUser;
     }
 
-    public List<User> getFriendsById(Integer id) throws NotFoundObjectException {
+    public List<User> getFriendsById(Integer id) {
         User user = userStorage.get(id);
         List<User> friends = new ArrayList<>();
         for (Integer friendId : user.getFriends()) {
@@ -75,7 +74,7 @@ public class UserService {
         return friends;
     }
 
-    public List<User> getMutualFriendsById(Integer firstUserId, Integer secondUserId) throws NotFoundObjectException {
+    public List<User> getMutualFriendsById(Integer firstUserId, Integer secondUserId) {
         Set<Integer> firstFriendId = userStorage.get(firstUserId).getFriends();
         Set<Integer> secondFriendId = userStorage.get(secondUserId).getFriends();
 
@@ -108,30 +107,31 @@ public class UserService {
         return users;
     }
 
-    public User getUserById(Integer id) throws NotFoundObjectException {
+    public User getUserById(Integer id)  {
         User user = userStorage.get(id);
         log.debug("Был получен пользователь {}, {}", id, user.getName());
         return user;
     }
 
-    public User deleteFriendById(Integer firstFriend, Integer secondFriend) throws NotFoundObjectException {
+    public User deleteFriendById(Integer firstFriend, Integer secondFriend) throws NotFoundObjectException  {
         User user = userStorage.get(firstFriend);
         User friend = userStorage.get(secondFriend);
 
         if (user.deleteFriend(secondFriend) && friend.deleteFriend(firstFriend)) {
             userStorage.update(user);
             userStorage.update(friend);
-            log.debug("Друг {} {}, был добавлен {}", secondFriend, friend.getName(),
+            log.debug("Друг: {} {}, был добавлен {}", secondFriend, friend.getName(),
                     friend.getFriends());
             return user;
         } else {
+            log.debug("Объекты не найдены");
             throw new NotFoundObjectException("Объекты не найдены");
         }
     }
 
-    public User deleteUserById(Integer id) throws NotFoundObjectException {
+    public User deleteUserById(Integer id)  {
         User deleteUser = userStorage.delete(id);
-        log.debug("Пользователь {}, {}, удален", deleteUser.getId(), deleteUser.getName());
+        log.debug("Пользователь: {} {}, удален", deleteUser.getId(), deleteUser.getName());
         return deleteUser;
     }
 }
