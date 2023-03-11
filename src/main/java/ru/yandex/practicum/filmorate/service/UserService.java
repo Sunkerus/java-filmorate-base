@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.instances.NotFoundObjectException;
+import ru.yandex.practicum.filmorate.exception.instances.ValidationException;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 import ru.yandex.practicum.filmorate.model.User;
 
@@ -29,17 +30,14 @@ public class UserService {
         return userStorage.containsUser(id);
     }
 
-    public User addUser(User user) {
+    public User addUser(User user) throws ValidationException {
         validateCorrect(user);
         if (user.getName().isBlank()) {
             user.setName(user.getLogin());
-            userStorage.add(user);
-            log.debug("Пользователь: {} {}, добавлен в хранилище.", user.getId(), user.getName());
-            return user;
         }
-        User newUser = userStorage.add(user);
-        log.debug("Был добавлен новый пользователь {}, {}", newUser.getId(), user.getName());
-        return newUser;
+        User tempUser = userStorage.add(user);
+        log.debug("Был добавлен новый пользователь {}, {}", tempUser.getId(), tempUser.getName());
+        return  tempUser;
     }
 
     public User addFriendById(Integer id, Integer friendId) {

@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.instances.InternalServerException;
 import ru.yandex.practicum.filmorate.exception.instances.NotFoundObjectException;
+import ru.yandex.practicum.filmorate.exception.instances.ValidationException;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.model.Film;
 
@@ -28,7 +29,7 @@ public class FilmService {
         this.userService = userService;
     }
 
-    public Film addFilm(Film film)  {
+    public Film addFilm(Film film) throws ValidationException {
         validate(film);
         Film newFilm = filmStorage.add(film);
         log.debug("Был добавлен новый фильм: {}, {}", newFilm.getId(), newFilm.getName());

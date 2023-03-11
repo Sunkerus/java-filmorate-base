@@ -36,11 +36,7 @@ public class InMemoryUserStorage implements UserStorage {
     }
 
     @Override
-    public User add(User user) throws ValidationException {
-        boolean isUserExist = users.values().stream().anyMatch(u -> u.equals(user));
-        if (isUserExist) {
-            throw new ValidationException("Возникла проблема при добалвении пользователя");
-        }
+    public User add(User user)  {
         user.setId(++userId);
         users.put(user.getId(), user);
         return user;

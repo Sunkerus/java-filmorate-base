@@ -34,11 +34,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
-    public Film add(Film film) throws NotFoundObjectException {
-        boolean isFilmExist = films.values().stream().anyMatch(f -> f.equals(film));
-        if (isFilmExist) {
-            throw new NotFoundObjectException("Фильм с таким id не существует");
-        }
+    public Film add(Film film)  {
         film.setId(++filmId);
         films.put(film.getId(), film);
         return film;
@@ -47,9 +43,8 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     public Film delete(Integer id) throws NotFoundObjectException {
-        if (films.containsKey(id)) {
-            Film deleteFilm = films.get(id);
-            films.remove(deleteFilm.getId());
+        Film deleteFilm = films.remove(id);
+        if (deleteFilm != null) {
             return deleteFilm;
         } else {
             throw new NotFoundObjectException("Объект не найден");
