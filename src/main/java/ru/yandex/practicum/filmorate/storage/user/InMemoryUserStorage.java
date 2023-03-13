@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.instances.InternalServerException;
 import ru.yandex.practicum.filmorate.exception.instances.NotFoundObjectException;
 import ru.yandex.practicum.filmorate.exception.instances.ValidationException;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.util.Collection;
@@ -42,14 +43,14 @@ public class InMemoryUserStorage implements UserStorage {
         return user;
     }
 
+    //исправил
     @Override
     public User delete(Integer id) throws NotFoundObjectException {
-        if (users.containsKey(id)) {
-            User deleteUser = users.get(id);
-            users.remove(id);
+        User deleteUser = users.remove(id);
+        if (deleteUser != null) {
             return deleteUser;
         } else {
-            throw new NotFoundObjectException("Пользователь не найден по id");
+            throw new NotFoundObjectException("Пользователь не найден");
         }
     }
 
