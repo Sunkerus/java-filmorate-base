@@ -7,12 +7,18 @@ import javax.validation.constraints.*;
 
 import lombok.Builder;
 import lombok.Data;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Builder(toBuilder = true)
 public class User {
+
+
+    private Set<Integer> friends;
 
     private Integer id;
 
@@ -30,6 +36,18 @@ public class User {
     @NotNull(message = "Поле birthday не может быть пустым")
     @Past(message = "Дата дня рождения не должна быть указана в будущем.")
     private LocalDate birthday;
+
+    public boolean addFriend(int id) {
+
+        if (friends == null) {
+            friends = new HashSet<>();
+        }
+        return friends.add(id);
+    }
+    public boolean deleteFriend(int id) {
+        return friends.remove(id);
+    }
+
 
 
 }

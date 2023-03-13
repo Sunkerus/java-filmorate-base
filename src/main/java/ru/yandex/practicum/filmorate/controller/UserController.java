@@ -2,51 +2,68 @@ package ru.yandex.practicum.filmorate.controller;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Positive;
 
-import lombok.extern.slf4j.Slf4j;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
-import static ru.yandex.practicum.filmorate.validate.UserValidator.validateCorrect;
-
-@Slf4j
 @RestController
+@RequiredArgsConstructor
+@RequestMapping("/users")
 public class UserController {
 
-    private int userIdent = 0;
-    private final Map<Integer, User> userStorage = new HashMap<>();
+    private final UserService userService;
 
-    @GetMapping("/users")
+    @GetMapping
     public Collection<User> getAllUsers() {
-        log.trace("Была запрошена информация о всех пользователях");
-        return userStorage.values();
+        return userService.getAll();
     }
 
-    @PostMapping("/users")
-    public User addUser(@Valid @NotNull @RequestBody User user) throws ValidationException {
-        validateCorrect(user);
-
-        if (user.getId() == null) {
-            user.setId(++userIdent);
-        }
-        log.trace("Была добавлена информация о пользователе с id: " + user.getId());
-        userStorage.put(user.getId(), user);
-        return user;
+    @GetMapping("/{id}/friends")
+    public List<User> getAllFriend(@NotNull @Positive @PathVariable Integer id) {
+        return userService.getFriendsById(id);
     }
 
-    @PutMapping("/users")
-    public User updateUser(@Valid @NotNull @RequestBody User user) throws ValidationException {
-        if (userStorage.containsKey(user.getId())) {
-            validateCorrect(user);
-            userStorage.put(user.getId(), user);
-            return userStorage.get(user.getId());
-        } else {
-            throw new ValidationException("Пользователь с таким id не найден. ");
-        }
+    @GetMapping("/{id}/friends/common/{otherId}")
+    public List<User> getCommonFriends(@PathVariable(name = "id") @NotNull @Positive Integer firstUserId,
+                                       @PathVariable(name = "otherId") @NotNull @Positive Integer secondUserId) {
+        return userService.getMutualFriendsById(firstUserId, secondUserId);
+    }
+
+    @GetMapping("/{id}")
+    public User getUserById(@NotNull @Positive @PathVariable Integer id) {
+        return userService.getUserById(id);
+    }
+
+    @PostMapping
+    public User addUser(@NotNull @Valid @RequestBody User user) {
+        return userService.addUser(user);
+    }
+
+    @PutMapping(value = "/{id}/friends/{friendId}")
+    public User addFriend(@NotNull @Positive @PathVariable Integer id,
+                          @NotNull @Positive @PathVariable Integer friendId) {
+        return userService.addFriendById(id, friendId);
+    }
+
+    @PutMapping
+    public User updateUser(@RequestBody @NotNull @Valid User user) {
+        return userService.updateUser(user);
+    }
+
+    @DeleteMapping(value = "/{id}/friends/{friendId}")
+    public User deleteFriend(@NotNull @Positive @PathVariable Integer id,
+                             @NotNull @Positive @PathVariable Integer friendId) {
+        return userService.deleteFriendById(id, friendId);
+    }
+
+    @DeleteMapping("/{id}")
+    public User deleteUserById(@NotNull @Positive @PathVariable Integer id) {
+        return userService.deleteUserById(id);
     }
 }
