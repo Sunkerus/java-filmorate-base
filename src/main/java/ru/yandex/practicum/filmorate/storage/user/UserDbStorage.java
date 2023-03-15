@@ -59,10 +59,7 @@ public class UserDbStorage implements UserStorage {
     public User update(User user) {
         log.info("Начало обновления юзера в таблице");
         String sql = "UPDATE USERS SET EMAIL=?, LOGIN=?, NAME=?, BIRTHDAY=? WHERE ID=?";
-        if (user.getName() == null || user.getName().isBlank()) {
-            user.setName(user.getLogin());
-        }
-        int rowNum = jdbcTemplate.update(sql, user.getEmail(), user.getLogin(), user.getName(), user.getBirthday(), user.getId());
+         int rowNum = jdbcTemplate.update(sql, user.getEmail(), user.getLogin(), user.getName(), user.getBirthday(), user.getId());
         log.info("{} строк обновлено", rowNum);
         return user;
     }

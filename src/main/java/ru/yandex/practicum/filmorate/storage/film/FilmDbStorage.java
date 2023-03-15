@@ -61,13 +61,13 @@ public class FilmDbStorage implements FilmStorage {
 
     @Override
     public void decreaseRating(Integer filmId) {
-        String sql = "UPDATE FILMS SET RATE=RATE-5 WHERE id = ?";
+        String sql = "UPDATE FILMS SET RATE=RATE-1 WHERE id = ?";
         jdbcTemplate.update(sql, filmId);
     }
 
     @Override
     public void increaseRating(Integer filmId) {
-        String sql = "UPDATE FILMS SET RATE=RATE+5 WHERE id = ?";
+        String sql = "UPDATE FILMS SET RATE=RATE+1 WHERE id = ?";
         jdbcTemplate.update(sql, filmId);
     }
 

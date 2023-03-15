@@ -1,33 +1,33 @@
-DROP TABLE IF EXISTS film_genre;
-DROP TABLE IF EXISTS subscribes;
-DROP TABLE IF EXISTS users;
-DROP TABLE IF EXISTS films;
-DROP TABLE IF EXISTS mpa;
-DROP TABLE IF EXISTS genre;
-DROP TABLE IF EXISTS rating;
+DROP TABLE IF EXISTS film_genre CASCADE;
+DROP TABLE IF EXISTS subscribes CASCADE;
+DROP TABLE IF EXISTS users CASCADE;
+DROP TABLE IF EXISTS films CASCADE;
+DROP TABLE IF EXISTS mpa CASCADE;
+DROP TABLE IF EXISTS genre CASCADE;
+DROP TABLE IF EXISTS rating CASCADE;
 
 CREATE TABLE IF NOT EXISTS mpa
 (
     id   int PRIMARY KEY AUTO_INCREMENT,
-    name varchar(100),
+    name varchar(300),
     PRIMARY KEY (id)
 );
 
 CREATE TABLE IF NOT EXISTS genre
 (
     id   int PRIMARY KEY AUTO_INCREMENT,
-    name varchar(100),
+    name varchar(300),
     PRIMARY KEY (id)
 );
 
 CREATE TABLE IF NOT EXISTS films
 (
     id           int PRIMARY KEY AUTO_INCREMENT,
-    name         varchar(100),
+    name         varchar(300),
     mpa          int
         CONSTRAINT films_mpa_id_fk REFERENCES mpa (id),
     rate         int DEFAULT 0,
-    description  varchar(100),
+    description  varchar(300),
     release_date date,
     duration     int,
     PRIMARY KEY (id)
@@ -36,9 +36,9 @@ CREATE TABLE IF NOT EXISTS films
 CREATE TABLE IF NOT EXISTS users
 (
     id       int PRIMARY KEY AUTO_INCREMENT,
-    email    varchar(100),
-    login    varchar(100),
-    name     varchar(100),
+    email    varchar(300),
+    login    varchar(300),
+    name     varchar(300),
     birthday date,
     PRIMARY KEY (id)
 );
@@ -59,4 +59,13 @@ CREATE TABLE IF NOT EXISTS film_genre
     genre_id int
         CONSTRAINT genre_id_fk REFERENCES genre (id),
     CONSTRAINT unique_id_fk UNIQUE (film_id, genre_id)
+);
+
+CREATE TABLE IF NOT EXISTS like_to_film
+(
+    user_id bigint NOT NULL,
+    film_id bigint NOT NULL,
+    CONSTRAINT likes_to_films_pkey PRIMARY KEY (user_id, film_id),
+    CONSTRAINT likes_to_films_film_id FOREIGN KEY (film_id) REFERENCES films (id) ON DELETE CASCADE,
+    CONSTRAINT likes_to_films_user_id FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
 );
