@@ -80,7 +80,11 @@ public class FilmService {
         if (!userService.containsUser(userId)) {
             throw new NotFoundObjectException("Пользователь " + userId + "не может быть найден");
         }
-        filmStorage.decreaseRating(id,userId);
+        if (filmStorage.containsLikeUserFilm(id,userId)) {
+            filmStorage.decreaseRating(id, userId);
+        }else {
+            throw new NotFoundObjectException("Лайк этого пользователя не может быть удалён т.к. он его не ставил");
+        }
     }
 
 

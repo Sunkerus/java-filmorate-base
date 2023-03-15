@@ -139,7 +139,7 @@ public class FilmDbStorage implements FilmStorage {
 
     public boolean containsLikeUserFilm(Integer filmId, Integer userId) {
         String sql = "SELECT * FROM LIKE_TO_FILM WHERE FILM_ID = ? AND USER_ID = ?";
-        return !jdbcTemplate.query(sql,filmId,userId).isEmpty;
+        return !jdbcTemplate.query(sql,this::filmBuilder,filmId,userId).isEmpty();
     }
 
 

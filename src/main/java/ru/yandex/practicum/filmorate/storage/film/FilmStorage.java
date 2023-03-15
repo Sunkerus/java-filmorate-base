@@ -21,4 +21,5 @@ public interface FilmStorage {
 
     void increaseRating(Integer filmId,Integer userId);
 
+    boolean containsLikeUserFilm(Integer filmId,Integer userId);
 }
