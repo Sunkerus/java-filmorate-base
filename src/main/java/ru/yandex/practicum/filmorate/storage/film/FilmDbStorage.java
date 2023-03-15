@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.storage.film;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.dao.DuplicateKeyException;
@@ -9,6 +10,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.relational.core.sql.SQL;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.ResultSetExtractor;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -69,7 +71,7 @@ public class FilmDbStorage implements FilmStorage {
         String sql = "UPDATE FILMS SET RATE=RATE+1 WHERE id = ?";
         jdbcTemplate.update(sql, filmId);
         String insertLikeAndUser = "INSERT INTO LIKE_TO_FILM (USER_ID, FILM_ID) VALUES(?,?)";
-        jdbcTemplate.update(insertLikeAndUser,filmId,userId);
+        jdbcTemplate.update(insertLikeAndUser,userId,filmId);
     }
 
 
@@ -78,7 +80,7 @@ public class FilmDbStorage implements FilmStorage {
         String sql = "UPDATE FILMS SET RATE=RATE-1 WHERE id = ?";
         jdbcTemplate.update(sql, filmId);
         String insertLikeAndUser = "DELETE FROM LIKE_TO_FILM WHERE USER_ID = ? AND FILM_ID = ?";
-        jdbcTemplate.update(insertLikeAndUser,filmId,userId);
+        jdbcTemplate.update(insertLikeAndUser,userId,filmId);
     }
 
     @Override
@@ -138,8 +140,8 @@ public class FilmDbStorage implements FilmStorage {
 
 
     public boolean containsLikeUserFilm(Integer filmId, Integer userId) {
-        String sql = "SELECT * FROM LIKE_TO_FILM WHERE FILM_ID = ? AND USER_ID = ?";
-        return !jdbcTemplate.query(sql,this::filmBuilder,filmId,userId).isEmpty();
+        String sql = "SELECT * FROM LIKE_TO_FILM WHERE USER_ID = ? AND FILM_ID = ?";
+        return jdbcTemplate.query(sql, ResultSet::next,userId, filmId) != null;
     }
 
 
@@ -175,6 +177,10 @@ public class FilmDbStorage implements FilmStorage {
                 .build();
     }
 
+
+
+
+
     private void batchInsert(List<Genre> genreList, String sqlGenre, Integer filmId) {
         try {
 
@@ -198,6 +204,8 @@ public class FilmDbStorage implements FilmStorage {
             log.info(e.getMessage());
         }
     }
+
+
         
 
 }
