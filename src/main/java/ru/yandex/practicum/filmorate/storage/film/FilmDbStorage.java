@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.relational.core.sql.SQL;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.stereotype.Component;
@@ -13,6 +15,7 @@ import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
 
+import javax.swing.plaf.nimbus.State;
 import java.sql.Date;
 import java.sql.*;
 import java.util.*;
@@ -43,6 +46,7 @@ public class FilmDbStorage implements FilmStorage {
             return Optional.empty();
         }
     }
+
     @Override
     public List<Film> getAll() {
         String sql = "SELECT F.*,\n" +
@@ -59,25 +63,30 @@ public class FilmDbStorage implements FilmStorage {
 
 
 
-    @Override
-    public void decreaseRating(Integer filmId) {
-        String sql = "UPDATE FILMS SET RATE=RATE-1 WHERE id = ?";
-        jdbcTemplate.update(sql, filmId);
-    }
 
     @Override
-    public void increaseRating(Integer filmId) {
+    public void increaseRating(Integer filmId,Integer userId) {
         String sql = "UPDATE FILMS SET RATE=RATE+1 WHERE id = ?";
         jdbcTemplate.update(sql, filmId);
+        String insertLikeAndUser = "INSERT INTO LIKE_TO_FILM (USER_ID, FILM_ID) VALUES(?,?)";
+        jdbcTemplate.update(insertLikeAndUser,filmId,userId);
     }
 
+
+    @Override
+    public void decreaseRating(Integer filmId,Integer userId) {
+        String sql = "UPDATE FILMS SET RATE=RATE-1 WHERE id = ?";
+        jdbcTemplate.update(sql, filmId);
+        String insertLikeAndUser = "DELETE FROM LIKE_TO_FILM WHERE USER_ID = ? AND FILM_ID = ?";
+        jdbcTemplate.update(insertLikeAndUser,filmId,userId);
+    }
 
     @Override
     public Film add(Film film) {
         String sql = "INSERT INTO FILMS (NAME, MPA, RATE, DESCRIPTION, RELEASE_DATE, DURATION) VALUES (?, ?, ?, ?, ?, ?)";
         GeneratedKeyHolder gkh = new GeneratedKeyHolder();
-        jdbcTemplate.update(conn -> {
-            PreparedStatement ps = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+        jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             ps.setString(1, film.getName());
             ps.setInt(2, film.getMpa().getId());
             ps.setInt(3, film.getRate());
@@ -86,10 +95,11 @@ public class FilmDbStorage implements FilmStorage {
             ps.setInt(6, film.getDuration());
             return ps;
         }, gkh);
-        int filmId = Objects.requireNonNull(gkh.getKey()).intValue();
+        Integer filmId = Objects.requireNonNull(gkh.getKey()).intValue();
         if (film.getGenres() != null) {
-            String sqlGenre = "INSERT INTO FILM_GENRE (FILM_ID, GENRE_ID) VALUES (?, ?)";
-            film.getGenres().forEach(genre -> jdbcTemplate.update(sqlGenre, filmId, genre.getId()));
+            String sqlInsGenre = "INSERT INTO FILM_GENRE (FILM_ID, GENRE_ID) VALUES (?, ?)";
+
+            batchInsert(film.getGenres(), sqlInsGenre,filmId);
         }
         film.setId(filmId);
         return film;
@@ -113,15 +123,8 @@ public class FilmDbStorage implements FilmStorage {
         jdbcTemplate.update(sqlDelGenre, film.getId());
         if (film.getGenres() != null && film.getGenres().size() > 0) {
             String sqlInsGenre = "INSERT INTO FILM_GENRE (FILM_ID, GENRE_ID) VALUES (?, ?)";
-            film.getGenres().forEach(
-                    genre -> {
-                        try {
-                            jdbcTemplate.update(sqlInsGenre, film.getId(), genre.getId());
-                        } catch (DuplicateKeyException e) {
-                            log.info(e.getMessage());
-                        }
-                    }
-            );
+
+            batchInsert(film.getGenres(), sqlInsGenre, film.getId());
         }
         return this.get(film.getId()).orElseThrow();
     }
@@ -131,6 +134,12 @@ public class FilmDbStorage implements FilmStorage {
     public boolean containsFilm(Integer id) {
         String sql = "SELECT F.*, M.NAME AS MPA_NAME FROM FILMS F LEFT JOIN MPA M ON F.MPA = M.ID WHERE F.id = ?";
         return !jdbcTemplate.query(sql, this::filmBuilder, id).isEmpty();
+    }
+
+
+    public boolean containsLikeUserFilm(Integer filmId, Integer userId) {
+        String sql = "SELECT * FROM LIKE_TO_FILM WHERE FILM_ID = ? AND USER_ID = ?";
+        return !jdbcTemplate.query(sql,filmId,userId).isEmpty;
     }
 
 
@@ -165,4 +174,30 @@ public class FilmDbStorage implements FilmStorage {
                 .duration(rs.getInt("DURATION"))
                 .build();
     }
+
+    private void batchInsert(List<Genre> genreList, String sqlGenre, Integer filmId) {
+        try {
+
+            jdbcTemplate.batchUpdate(sqlGenre,
+                    new BatchPreparedStatementSetter() {
+
+                        @Override
+                        public void setValues(PreparedStatement ps, int i) throws SQLException {
+                            ps.setInt(1, filmId);
+                            ps.setInt(2, genreList.get(i).getId());
+                        }
+
+                        @Override
+                        public int getBatchSize() {
+                            return genreList.size();
+                        }
+                    }
+
+            );
+        }catch (Exception e) {
+            log.info(e.getMessage());
+        }
+    }
+        
+
 }

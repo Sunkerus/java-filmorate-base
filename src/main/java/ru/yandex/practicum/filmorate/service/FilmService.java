@@ -68,7 +68,7 @@ public class FilmService {
         if (!userService.containsUser(userId)) {
             throw new NotFoundObjectException("Пользователь " + userId + "не может быть найден");
         }
-        filmStorage.increaseRating(id);
+        filmStorage.increaseRating(id,userId);
     }
 
 
@@ -80,7 +80,7 @@ public class FilmService {
         if (!userService.containsUser(userId)) {
             throw new NotFoundObjectException("Пользователь " + userId + "не может быть найден");
         }
-        filmStorage.decreaseRating(id);
+        filmStorage.decreaseRating(id,userId);
     }
 
 

@@ -17,7 +17,8 @@ public interface FilmStorage {
 
     boolean containsFilm(Integer id);
 
-    void decreaseRating(Integer filmId);
+    void decreaseRating(Integer filmId,Integer userId);
 
-    void increaseRating(Integer filmId);
+    void increaseRating(Integer filmId,Integer userId);
+
 }
