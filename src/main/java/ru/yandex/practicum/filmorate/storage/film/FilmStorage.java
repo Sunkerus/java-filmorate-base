@@ -3,16 +3,23 @@ package ru.yandex.practicum.filmorate.storage.film;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.util.Collection;
+import java.util.Optional;
 
 public interface FilmStorage {
 
     Collection<Film> getAll();
-    Film get(Integer id);
+
+    Optional<Film> get(Integer id);
 
     Film update(Film film);
 
     Film add(Film film);
 
-    Film delete(Integer id);
+    boolean containsFilm(Integer id);
 
+    void decreaseRating(Integer filmId,Integer userId);
+
+    void increaseRating(Integer filmId,Integer userId);
+
+    boolean containsLikeUserFilm(Integer filmId,Integer userId);
 }
